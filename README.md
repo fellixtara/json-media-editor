@@ -10,6 +10,12 @@ It's built for animation tools that load their scene from an uploaded JSON file,
 - **Customizable content panel.** Values are detected automatically and grouped by layer:
   - **Images.** Shown with a preview. Replace one from the Media Library or paste a URL. For Unicorn Studio image layers, `naturalWidth` / `naturalHeight` are updated to match the new image. Lottie image assets (`u` + `p`) are supported too.
   - **Fonts** (`.ttf`, `.otf`, `.woff`, `.woff2`). Shown with a live preview in the font itself. Copies of the font family name in the same layer (e.g. Unicorn's `fontFamily` and `fontCSS.family`) stay in sync, so the layer keeps using the loaded font.
+  - **Weight and italic, made simple** (Unicorn Studio text layers). In Unicorn Studio, `fontStyle` sets how thick the text is drawn (`"600"`) or makes it italic (`"italic"`), and `fontWeight` is only the weight the font file is registered with. The editor replaces this pair with:
+    - **Font file details.** The weight, italic and variable axis are read from the font file itself (TTF, OTF, WOFF), e.g. *SemiBold 600 · single weight*. Picking a new file registers it with its real weight automatically.
+    - **Weight dropdown** (Thin 100 … Black 900) and an **Italic** checkbox. Unicorn Studio can't combine the two: italic text is always drawn at Regular 400, so the dropdown is disabled while Italic is on.
+    - **Plain-language notes**, only when needed: when the weight is thinner than the file (it won't show, with a one-click *Use file weight*), when it's thicker (the browser thickens it artificially), when the file has no italic, or when the JSON registers the file with the wrong weight (*Match file*). Existing values are never changed without a click.
+    - **A preview that matches the animation,** including synthetic bold or italic.
+  - **Show technical details** reveals the raw keys and JSON paths for developers.
   - **Other media files.** Video, audio, JSON, 3D models.
   - **Texts.** For example Unicorn Studio `textContent` or Lottie text, with their style: font family, size, weight, line height, letter spacing, alignment, color and text box size. Styles are grouped by the screen sizes where each value is actually used, following Unicorn Studio's breakpoint rules:
     - A breakpoint applies when the screen is at most its `max` width. Its `min` is not checked, so the smallest breakpoint (e.g. Tablet ≤991px) also covers mobile.
@@ -75,7 +81,7 @@ Examples:
 
 ![Backups](screenshots/6-backups.jpg)
 
-**7. Text layers: edit the text, swap the font file (with live preview) and adjust typography per breakpoint**
+**7. Text layers: text, font file details, a simple Weight / Italic control with notes, and styles per screen size**
 
 ![Text and font](screenshots/7-text-and-font.jpg)
 

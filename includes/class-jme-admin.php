@@ -116,9 +116,28 @@ class JME_Admin {
 					'text'         => __( 'Text', 'json-media-editor' ),
 					'baseStyle'    => __( 'Text style', 'json-media-editor' ),
 					'andSmaller'   => __( '& smaller', 'json-media-editor' ),
+					'fontSection'  => __( 'Font', 'json-media-editor' ),
+					'weight'       => __( 'Weight', 'json-media-editor' ),
+					'italic'       => __( 'Italic', 'json-media-editor' ),
+					'technical'    => __( 'Technical values', 'json-media-editor' ),
+					'readingFont'  => __( 'Reading font file…', 'json-media-editor' ),
+					'fontUnknown'  => __( 'Font details unavailable (e.g. .woff2 or blocked download)', 'json-media-editor' ),
+					'variableFont' => __( 'variable', 'json-media-editor' ),
+					'singleWeight' => __( 'single weight', 'json-media-editor' ),
+					/* translators: %s: weight name, e.g. "SemiBold 600". */
+					'useWeight'    => __( 'Use %s', 'json-media-editor' ),
+					'matchFile'    => __( 'Match file', 'json-media-editor' ),
+					'italicWeight' => __( 'Unicorn Studio can\'t combine italic with a weight, so italic text is always drawn at Regular 400.', 'json-media-editor' ),
+					'fakeItalic'   => __( 'This font file has no italic style, so the browser slants it artificially.', 'json-media-editor' ),
+					/* translators: 1: font file weight, 2: weight registered in the JSON. */
+					'registeredAs' => __( 'The font file is %1$s, but the animation registers it as %2$s.', 'json-media-editor' ),
+					/* translators: 1: font file weight, 2: chosen weight. */
+					'thinner'      => __( 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
+					/* translators: 1: font file weight, 2: chosen weight. */
+					'thicker'      => __( 'Thicker than the font file (%1$s): the browser may thicken it artificially. Upload a font file in %2$s for the best result.', 'json-media-editor' ),
 					'allScreens'   => __( 'Text style — all screens', 'json-media-editor' ),
 					'bpNote'       => __( 'Grouped by the screen sizes where each value is actually used. Duplicate copies in the file that are not used get the same value automatically.', 'json-media-editor' ),
-					'fontHint'     => __( 'Upload a .ttf, .otf, .woff or .woff2 file. If the new font has a different name, also update "Font family" — copies in the same layer are kept in sync.', 'json-media-editor' ),
+					'fontHint'     => __( 'Upload a .ttf, .otf, .woff or .woff2 file. Its weight is read from the file automatically. If the new font has a different name, also update "Font family".', 'json-media-editor' ),
 					'unsaved'      => __( 'Changed — click "Save JSON" to apply.', 'json-media-editor' ),
 					'layer'        => __( 'Layer', 'json-media-editor' ),
 					'confirmLeave' => __( 'You have unsaved changes.', 'json-media-editor' ),
@@ -291,7 +310,10 @@ class JME_Admin {
 			<?php wp_nonce_field( 'jme_save_' . $attachment_id ); ?>
 
 			<div class="jme-panel">
-				<h2><?php esc_html_e( 'Customizable content', 'json-media-editor' ); ?></h2>
+				<h2 class="jme-panel-title">
+					<?php esc_html_e( 'Customizable content', 'json-media-editor' ); ?>
+					<label class="jme-tech-toggle"><input type="checkbox" id="jme-tech"> <?php esc_html_e( 'Show technical details', 'json-media-editor' ); ?></label>
+				</h2>
 				<p class="description"><?php esc_html_e( 'Images, fonts, media files, texts and text styles detected in the file, grouped by layer. Change them here — the JSON below updates automatically.', 'json-media-editor' ); ?></p>
 				<div id="jme-fields" class="jme-fields"></div>
 			</div>
