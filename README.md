@@ -2,12 +2,18 @@
 
 A WordPress plugin for editing JSON files in the Media Library from the dashboard. You don't need to download the file, edit it and upload it again.
 
-It's built for animation tools that load their scene from an uploaded JSON file, such as **Unicorn Studio** (`data-us-project-src`) or **Lottie**. To change an image in the animation, pick a new one and click **Save**. The file is overwritten at the same URL, so the animation updates right away.
+It's built for animation tools that load their scene from an uploaded JSON file, such as **Unicorn Studio** (`data-us-project-src`) or **Lottie**. To change an image, font or text in the animation, edit it and click **Save**. The file is overwritten at the same URL, so the animation updates right away.
 
 ## Features
 
 - **JSON files only.** The picker lists Media Library attachments with a `.json` extension, whatever their MIME type.
-- **Images panel.** Every image URL in the file is shown with a preview. You can replace it from the Media Library or paste a URL. For Unicorn Studio image layers, `naturalWidth` / `naturalHeight` are updated to match the new image.
+- **Customizable content panel.** Values are detected automatically and grouped by layer:
+  - **Images.** Shown with a preview. Replace one from the Media Library or paste a URL. For Unicorn Studio image layers, `naturalWidth` / `naturalHeight` are updated to match the new image. Lottie image assets (`u` + `p`) are supported too.
+  - **Fonts** (`.ttf`, `.otf`, `.woff`, `.woff2`). Shown with a live preview in the font itself. Copies of the font family name in the same layer (e.g. Unicorn's `fontFamily` and `fontCSS.family`) stay in sync, so the layer keeps using the loaded font.
+  - **Other media files.** Video, audio, JSON, 3D models.
+  - **Texts.** For example Unicorn Studio `textContent` or Lottie text, with their style: font family, size, weight, line height, letter spacing, alignment, color and text box size. Per-breakpoint values (Desktop, Tablet…) are shown separately, because they override the base values on those screens.
+  - **Types are kept.** Numbers stay numbers and strings stay strings, so the animation reads values exactly as before.
+- **Font uploads.** `.ttf`, `.otf`, `.woff` and `.woff2` files can be uploaded to the Media Library, checked by their font signature. To turn this off, use `add_filter( 'jme_allow_font_uploads', '__return_false' );`.
 - **Readable editor.** Minified JSON is shown indented in the WordPress code editor (CodeMirror), with syntax highlighting, linting and folding. Only whitespace changes, so the data stays the same.
 - **Compact save.** By default the file is saved minified, like the original. Opening a file and saving it without changes gives a byte-identical file.
 - **Validation.** Invalid JSON is rejected in the browser and again on the server, so a broken file is never written.
@@ -30,10 +36,13 @@ It's built for animation tools that load their scene from an uploaded JSON file,
 
 1. Go to **Media → JSON Editor**. You can also use the **Edit JSON** link on a JSON file in the Media Library list view.
 2. Click **Select** next to the file you want to edit.
-3. In **Images**, click **Choose image** or paste a new URL. You can also edit the JSON directly in the editor.
+3. In **Customizable content**, change a text, pick a new image or font with **Choose image** / **Choose file**, or adjust the text style. You can also edit the JSON directly in the editor.
 4. Click **Save JSON**.
 
-Example: on a page whose hero section loads `.../uploads/2026/06/hoverreveal.json` through Unicorn Studio, swapping the image in the editor and saving changes the image-reveal animation straight away.
+Examples:
+
+- A hero section loads `hoverreveal.json` through Unicorn Studio. Swapping the image and saving changes the image-reveal animation straight away.
+- A hero heading is a Unicorn Studio text layer in `Finfluence_hero.json`. Editing the text, font file and font family changes the animated heading.
 
 ## Screenshots
 
@@ -61,6 +70,14 @@ Example: on a page whose hero section loads `.../uploads/2026/06/hoverreveal.jso
 
 ![Backups](screenshots/6-backups.jpg)
 
+**7. Text layers: edit the text, swap the font file (with live preview) and adjust typography per breakpoint**
+
+![Text and font](screenshots/7-text-and-font.jpg)
+
+**8. Result: the animated heading uses the new text and font**
+
+![Text and font result](screenshots/8-text-and-font-result.jpg)
+
 ## Developer hooks
 
 ```php
@@ -78,9 +95,10 @@ json-media-editor/
 ├── includes/
 │   ├── class-jme-files.php      Scanning, reading, validation, saving, backups
 │   ├── class-jme-admin.php      Media → JSON Editor screens and save/restore handlers
-│   └── class-jme-frontend.php   ?ver= cache busting on the front end
+│   ├── class-jme-frontend.php   ?ver= cache busting on the front end
+│   └── class-jme-uploads.php    Font upload support (.ttf/.otf/.woff/.woff2)
 ├── assets/
-│   ├── admin.js                 Editor, images panel, validation
+│   ├── admin.js                 Editor, field detection, validation
 │   └── admin.css
 ├── screenshots/                 README images (not included in the release ZIP)
 ├── readme.txt                   WordPress.org readme
