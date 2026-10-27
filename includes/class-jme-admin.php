@@ -125,12 +125,14 @@ class JME_Admin {
 					'singleWeight' => __( 'single weight', 'json-media-editor' ),
 					/* translators: %s: weight name, e.g. "SemiBold 600". */
 					'useWeight'    => __( 'Use %s', 'json-media-editor' ),
-					/* translators: 1: font file weight, 2: chosen weight. */
-					'thinner'      => __( 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
-					/* translators: 1: font file weight, 2: chosen weight. */
-					'fakeBold'     => __( 'This font file is %1$s, so the browser thickens it artificially, and every weight from 600 up looks the same. Upload a font file in %2$s for a real %2$s.', 'json-media-editor' ),
-					/* translators: 1: font file weight, 2: chosen weight. */
-					'notThicker'   => __( 'This font file only contains %1$s, so it won\'t look thicker. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
+					/* translators: %1$s: font file weight, e.g. "SemiBold 600". */
+					'thinner'      => __( 'This font file only contains %1$s, so on its own a thinner weight won\'t show.', 'json-media-editor' ),
+					/* translators: %1$s: font file weight. */
+					'fakeBold'     => __( 'This font file only contains %1$s, so on its own the browser thickens it artificially (every weight from 600 up looks the same).', 'json-media-editor' ),
+					/* translators: %1$s: font file weight. */
+					'notThicker'   => __( 'This font file only contains %1$s, so on its own it won\'t look thicker.', 'json-media-editor' ),
+					/* translators: %1$s: font family name. */
+					'otherFaces'   => __( 'If the page also loads "%1$s" in other weights (e.g. Google Fonts in Elementor), the browser uses the closest one instead, which can be wider — check the line breaks after saving.', 'json-media-editor' ),
 					'allScreens'   => __( 'Text style — all screens', 'json-media-editor' ),
 					'bpNote'       => __( 'Grouped by the screen sizes where each value is actually used. Duplicate copies in the file that are not used get the same value automatically.', 'json-media-editor' ),
 					'fontHint'     => __( 'Upload a .ttf, .otf, .woff or .woff2 file. Its weight is read from the file automatically. If the new font has a different name, also update "Font family".', 'json-media-editor' ),

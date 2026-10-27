@@ -859,31 +859,32 @@
 			$weight.val( drawn.weight );
 			$notes.empty();
 
-			// Browsers look at the real weight inside the file (not fontWeight): they only add a
-			// synthetic bold, one fixed step, when 600+ is requested from a file lighter than 600.
-			if ( info && ! info.axis ) {
-				var useFileWeight = [
+			// With only this file, browsers use its real weight (not fontWeight) and add a synthetic
+			// bold, one fixed step, only when 600+ is requested from a file lighter than 600. But the
+			// page may also load the same family elsewhere (e.g. Google Fonts in Elementor); the browser
+			// then picks the closest of those weights, which can change the text width. The editor
+			// can't see the page's fonts, so it says so instead of guessing.
+			if ( info && ! info.axis && drawn.weight !== info.weight ) {
+				var outcome;
+
+				if ( drawn.weight < info.weight ) {
+					outcome = t( 'thinner', 'This font file only contains %1$s, so on its own a thinner weight won\'t show.' );
+				} else if ( drawn.weight >= 600 && info.weight < 600 ) {
+					outcome = t( 'fakeBold', 'This font file only contains %1$s, so on its own the browser thickens it artificially (every weight from 600 up looks the same).' );
+				} else {
+					outcome = t( 'notThicker', 'This font file only contains %1$s, so on its own it won\'t look thicker.' );
+				}
+
+				var family = String( ( getAt( parse( getText() ).data, group.path ) || {} ).fontFamily || '' );
+
+				note(
+					outcome.replace( '%1$s', weightName( info.weight ) ) + ' ' +
+						t( 'otherFaces', 'If the page also loads "%1$s" in other weights (e.g. Google Fonts in Elementor), the browser uses the closest one instead, which can be wider — check the line breaks after saving.' ).replace( '%1$s', family ),
 					t( 'useWeight', 'Use %s' ).replace( '%s', weightName( info.weight ) ),
 					function () {
 						setStyle( String( info.weight ) );
-					},
-				];
-
-				if ( drawn.weight < info.weight ) {
-					note(
-						t( 'thinner', 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
-						useFileWeight[ 0 ],
-						useFileWeight[ 1 ]
-					);
-				} else if ( drawn.weight > info.weight && drawn.weight >= 600 && info.weight < 600 ) {
-					note( t( 'fakeBold', 'This font file is %1$s, so the browser thickens it artificially, and every weight from 600 up looks the same. Upload a font file in %2$s for a real %2$s.' ).replace( '%1$s', weightName( info.weight ) ).replace( /%2\$s/g, weightName( drawn.weight ) ) );
-				} else if ( drawn.weight > info.weight ) {
-					note(
-						t( 'notThicker', 'This font file only contains %1$s, so it won\'t look thicker. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
-						useFileWeight[ 0 ],
-						useFileWeight[ 1 ]
-					);
-				}
+					}
+				);
 			}
 
 			updatePreview( group );

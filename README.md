@@ -13,10 +13,7 @@ It's built for animation tools that load their scene from an uploaded JSON file,
   - **Weight, made simple** (Unicorn Studio text layers). In Unicorn Studio, `fontStyle` sets how thick the text is drawn (`"600"`), and `fontWeight` is only the weight the font file is registered with. The editor replaces this pair with:
     - **Font file details.** The weight, italic and variable axis are read from the font file itself (TTF, OTF, WOFF), e.g. *SemiBold 600 · single weight*. Picking a new file registers it with its real weight automatically.
     - **Weight dropdown** (Thin 100 … Black 900). There is no italic option, because Unicorn Studio registers the font file as italic when `fontStyle` is italic, so an upright font file never looks slanted.
-    - **Plain-language notes**, only when needed. They follow how browsers render a single-weight font file, which depends on the real weight inside the file:
-      - Thinner than the file: it won't show (one-click *Use file weight*).
-      - Thicker than the file: the browser thickens it artificially only when 600+ is chosen and the file is lighter than 600, and every weight from 600 up then looks the same. Otherwise it won't look thicker.
-
+    - **A plain-language note** when the chosen weight differs from the font file. With only that file, a thinner weight won't show, and a thicker one either won't look thicker or gets an artificial bold (600+ on a file lighter than 600). The note also warns that if the page loads the same family in other weights (e.g. Google Fonts in Elementor), the browser uses the closest of those, which can be wider and change the line breaks. It has a one-click *Use file weight*.
       Existing values are never changed without a click.
     - **A preview that matches the animation,** including synthetic bold.
   - **Show technical details** reveals the raw keys and JSON paths for developers.
