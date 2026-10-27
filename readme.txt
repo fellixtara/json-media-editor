@@ -4,11 +4,11 @@ Tags: json, media, editor, unicorn studio, lottie
 Requires at least: 5.9
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Edit JSON files from the Media Library directly in the dashboard and swap their images, without downloading and re-uploading.
+Edit JSON files from the Media Library directly in the dashboard and customize their images, fonts, files and texts, without downloading and re-uploading.
 
 == Description ==
 
@@ -18,13 +18,18 @@ JSON Media Editor lets you do it in place:
 
 1. Go to **Media > JSON Editor**. Only JSON files from the Media Library are listed.
 2. Click **Select** next to a file.
-3. Replace an image in the **Images** panel (pick from the Media Library or paste a URL), or edit the JSON directly. The JSON is shown indented for readability — only whitespace changes, never the data.
+3. Change an image, font, file or text in the **Customizable content** panel, or edit the JSON directly. The JSON is shown indented for readability — only whitespace changes, never the data.
 4. Click **Save JSON**. The file is overwritten at the same URL, so the animation uses it immediately.
 
 Features:
 
 * Lists JSON attachments only (detected by `.json` extension, any MIME type).
-* Image panel with previews and Media Library picker; keeps `naturalWidth` / `naturalHeight` in sync for Unicorn Studio image layers.
+* Customizable content panel, grouped by layer, detected automatically:
+  * Images (preview + Media Library picker; keeps `naturalWidth` / `naturalHeight` in sync for Unicorn Studio image layers).
+  * Fonts (.ttf, .otf, .woff, .woff2) with a live preview; font family names in the same layer stay in sync.
+  * Other media files (video, audio, JSON, 3D models).
+  * Texts (e.g. Unicorn Studio `textContent`, Lottie text) and their style: font family, size, weight, line height, letter spacing, alignment, color and text box size — including per-breakpoint values.
+* Allows .ttf, .otf, .woff and .woff2 uploads to the Media Library (disable with the `jme_allow_font_uploads` filter).
 * WordPress code editor with JSON syntax highlighting, linting and folding.
 * Validation in the browser and on the server — invalid JSON is never written.
 * Optional compact save, matching the original minified format.
@@ -35,6 +40,10 @@ Features:
 Access requires the `upload_files` capability and permission to edit the attachment.
 
 == Changelog ==
+
+= 1.1.0 =
+* Detect fonts, other media files and texts (with typography and breakpoint values) in addition to images.
+* Allow font uploads to the Media Library.
 
 = 1.0.0 =
 * Initial release.

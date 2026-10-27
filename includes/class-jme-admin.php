@@ -102,12 +102,20 @@ class JME_Admin {
 			'jmeAdmin',
 			array(
 				'codeEditor' => $settings,
+				'fileUrl'    => wp_get_attachment_url( absint( $_GET['attachment_id'] ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'i18n'       => array(
 					'invalid'      => __( 'The JSON is not valid, so it was not saved:', 'json-media-editor' ),
 					'invalidLoad'  => __( 'The stored file is not valid JSON. It is shown unchanged; fix it before saving.', 'json-media-editor' ),
 					'chooseImage'  => __( 'Choose image', 'json-media-editor' ),
-					'useImage'     => __( 'Use this image', 'json-media-editor' ),
-					'noImages'     => __( 'No image URLs were found in this file.', 'json-media-editor' ),
+					'chooseFile'   => __( 'Choose file', 'json-media-editor' ),
+					'useFile'      => __( 'Use this file', 'json-media-editor' ),
+					'noFields'     => __( 'No images, fonts, files or texts were detected in this file. You can still edit the JSON below.', 'json-media-editor' ),
+					'image'        => __( 'Image', 'json-media-editor' ),
+					'fontFile'     => __( 'Font file', 'json-media-editor' ),
+					'file'         => __( 'File', 'json-media-editor' ),
+					'text'         => __( 'Text', 'json-media-editor' ),
+					'baseStyle'    => __( 'Text style', 'json-media-editor' ),
+					'fontHint'     => __( 'Upload a .ttf, .otf, .woff or .woff2 file. If the new font has a different name, also update "Font family" — copies in the same layer are kept in sync.', 'json-media-editor' ),
 					'unsaved'      => __( 'Changed — click "Save JSON" to apply.', 'json-media-editor' ),
 					'layer'        => __( 'Layer', 'json-media-editor' ),
 					'confirmLeave' => __( 'You have unsaved changes.', 'json-media-editor' ),
@@ -280,9 +288,9 @@ class JME_Admin {
 			<?php wp_nonce_field( 'jme_save_' . $attachment_id ); ?>
 
 			<div class="jme-panel">
-				<h2><?php esc_html_e( 'Images', 'json-media-editor' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Image URLs found in the file. Replace one from the Media Library or paste a URL — the JSON below updates automatically.', 'json-media-editor' ); ?></p>
-				<div id="jme-images" class="jme-images"></div>
+				<h2><?php esc_html_e( 'Customizable content', 'json-media-editor' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Images, fonts, media files, texts and text styles detected in the file, grouped by layer. Change them here — the JSON below updates automatically.', 'json-media-editor' ); ?></p>
+				<div id="jme-fields" class="jme-fields"></div>
 			</div>
 
 			<div class="jme-panel">
