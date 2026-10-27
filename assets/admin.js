@@ -849,7 +849,6 @@
 		function refresh() {
 			var owner = getAt( parse( getText() ).data, group.path ) || {};
 			var drawn = drawnStyle( owner );
-			var registered = registeredWeight( owner );
 			var info = group.font ? group.font.info : null;
 
 			if ( ! $weight.find( 'option[value="' + drawn.weight + '"]' ).length ) {
@@ -866,31 +865,32 @@
 				note( t( 'italicWeight', 'Unicorn Studio can\'t combine italic with a weight, so italic text is always drawn at Regular 400.' ) );
 			}
 
+			// Browsers look at the real weight inside the file (not fontWeight): they only add a
+			// synthetic bold, one fixed step, when 600+ is requested from a file lighter than 600.
 			if ( info && ! info.axis ) {
-				if ( registered !== info.weight ) {
-					note(
-						t( 'registeredAs', 'The font file is %1$s, but the animation registers it as %2$s.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( registered ) ),
-						t( 'matchFile', 'Match file' ),
-						function () {
-							var value = castLike( owner.fontWeight, String( info.weight ) );
-							apply( [ { path: group.path.concat( 'fontWeight' ), value: value } ] );
-							updateInputs( [ { path: group.path.concat( 'fontWeight' ), value: value } ] );
-							refresh();
-						}
-					);
-				}
+				var useFileWeight = [
+					t( 'useWeight', 'Use %s' ).replace( '%s', weightName( info.weight ) ),
+					function () {
+						setStyle( String( info.weight ) );
+					},
+				];
+
 				if ( drawn.italic && ! info.italic ) {
 					note( t( 'fakeItalic', 'This font file has no italic style, so the browser slants it artificially.' ) );
 				} else if ( ! drawn.italic && drawn.weight < info.weight ) {
 					note(
 						t( 'thinner', 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
-						t( 'useWeight', 'Use %s' ).replace( '%s', weightName( info.weight ) ),
-						function () {
-							setStyle( String( info.weight ) );
-						}
+						useFileWeight[ 0 ],
+						useFileWeight[ 1 ]
 					);
+				} else if ( ! drawn.italic && drawn.weight > info.weight && drawn.weight >= 600 && info.weight < 600 ) {
+					note( t( 'fakeBold', 'This font file is %1$s, so the browser thickens it artificially, and every weight from 600 up looks the same. Upload a font file in %2$s for a real %2$s.' ).replace( '%1$s', weightName( info.weight ) ).replace( /%2\$s/g, weightName( drawn.weight ) ) );
 				} else if ( ! drawn.italic && drawn.weight > info.weight ) {
-					note( t( 'thicker', 'Thicker than the font file (%1$s): the browser may thicken it artificially. Upload a font file in %2$s for the best result.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ) );
+					note(
+						t( 'notThicker', 'This font file only contains %1$s, so it won\'t look thicker. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
+						useFileWeight[ 0 ],
+						useFileWeight[ 1 ]
+					);
 				}
 			}
 

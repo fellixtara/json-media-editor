@@ -126,15 +126,14 @@ class JME_Admin {
 					'singleWeight' => __( 'single weight', 'json-media-editor' ),
 					/* translators: %s: weight name, e.g. "SemiBold 600". */
 					'useWeight'    => __( 'Use %s', 'json-media-editor' ),
-					'matchFile'    => __( 'Match file', 'json-media-editor' ),
 					'italicWeight' => __( 'Unicorn Studio can\'t combine italic with a weight, so italic text is always drawn at Regular 400.', 'json-media-editor' ),
 					'fakeItalic'   => __( 'This font file has no italic style, so the browser slants it artificially.', 'json-media-editor' ),
-					/* translators: 1: font file weight, 2: weight registered in the JSON. */
-					'registeredAs' => __( 'The font file is %1$s, but the animation registers it as %2$s.', 'json-media-editor' ),
 					/* translators: 1: font file weight, 2: chosen weight. */
 					'thinner'      => __( 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
 					/* translators: 1: font file weight, 2: chosen weight. */
-					'thicker'      => __( 'Thicker than the font file (%1$s): the browser may thicken it artificially. Upload a font file in %2$s for the best result.', 'json-media-editor' ),
+					'fakeBold'     => __( 'This font file is %1$s, so the browser thickens it artificially, and every weight from 600 up looks the same. Upload a font file in %2$s for a real %2$s.', 'json-media-editor' ),
+					/* translators: 1: font file weight, 2: chosen weight. */
+					'notThicker'   => __( 'This font file only contains %1$s, so it won\'t look thicker. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
 					'allScreens'   => __( 'Text style — all screens', 'json-media-editor' ),
 					'bpNote'       => __( 'Grouped by the screen sizes where each value is actually used. Duplicate copies in the file that are not used get the same value automatically.', 'json-media-editor' ),
 					'fontHint'     => __( 'Upload a .ttf, .otf, .woff or .woff2 file. Its weight is read from the file automatically. If the new font has a different name, also update "Font family".', 'json-media-editor' ),
