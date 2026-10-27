@@ -82,11 +82,11 @@ Examples:
 
 ![Backups](screenshots/6-backups.jpg)
 
-**7. Text layers: text, font file details, a simple Weight control with notes, and styles per screen size**
+**7. Text layers: new text, a new font file (Bold 700, read from the file), Weight and a wider Desktop box (860px)**
 
 ![Text and font](screenshots/7-text-and-font.jpg)
 
-**8. Result: the animated heading uses the new text and font**
+**8. Result: the animated heading uses the new text and font, on two lines that fit the wider box**
 
 ![Text and font result](screenshots/8-text-and-font-result.jpg)
 
