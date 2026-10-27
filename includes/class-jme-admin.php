@@ -118,7 +118,6 @@ class JME_Admin {
 					'andSmaller'   => __( '& smaller', 'json-media-editor' ),
 					'fontSection'  => __( 'Font', 'json-media-editor' ),
 					'weight'       => __( 'Weight', 'json-media-editor' ),
-					'italic'       => __( 'Italic', 'json-media-editor' ),
 					'technical'    => __( 'Technical values', 'json-media-editor' ),
 					'readingFont'  => __( 'Reading font file…', 'json-media-editor' ),
 					'fontUnknown'  => __( 'Font details unavailable (e.g. .woff2 or blocked download)', 'json-media-editor' ),
@@ -126,8 +125,6 @@ class JME_Admin {
 					'singleWeight' => __( 'single weight', 'json-media-editor' ),
 					/* translators: %s: weight name, e.g. "SemiBold 600". */
 					'useWeight'    => __( 'Use %s', 'json-media-editor' ),
-					'italicWeight' => __( 'Unicorn Studio can\'t combine italic with a weight, so italic text is always drawn at Regular 400.', 'json-media-editor' ),
-					'fakeItalic'   => __( 'This font file has no italic style, so the browser slants it artificially.', 'json-media-editor' ),
 					/* translators: 1: font file weight, 2: chosen weight. */
 					'thinner'      => __( 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.', 'json-media-editor' ),
 					/* translators: 1: font file weight, 2: chosen weight. */

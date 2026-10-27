@@ -507,7 +507,7 @@
 			text + ' · ' + t( 'singleWeight', 'single weight' );
 	}
 
-	/** Preview with the same FontFace descriptors Unicorn Studio uses, so synthetic bold/italic show too. */
+	/** Preview with the same FontFace descriptors Unicorn Studio uses, so synthetic bold shows too. */
 	function previewFont( url, $sample, descriptors ) {
 		if ( ! window.FontFace || ! url ) {
 			return;
@@ -726,7 +726,7 @@
 				}
 			} );
 
-			// Unicorn Studio text: one Weight + Italic control instead of the confusing fontStyle / fontWeight pair.
+			// Unicorn Studio text: one Weight control instead of the confusing fontStyle / fontWeight pair.
 			var owner = getAt( result.data, group.path );
 			var technical = [];
 			if ( isUnicornText( owner ) ) {
@@ -814,21 +814,23 @@
 		font.$preview.css( { 'font-weight': unicorn ? drawn.weight : '', 'font-style': drawn.italic ? 'italic' : '' } );
 	}
 
-	/** Weight dropdown, Italic checkbox and plain-language notes for a Unicorn Studio text layer. */
+	/**
+	 * Weight dropdown and plain-language notes for a Unicorn Studio text layer.
+	 *
+	 * No italic option: Unicorn registers the font file as italic when fontStyle contains
+	 * "italic", so browsers never slant an upright file and the setting has no visible effect.
+	 */
 	function renderTypography( group, $section ) {
 		var $grid = $section.find( '.jme-style-grid' );
 		var $weight = $( '<select>' );
-		var $italic = $( '<input type="checkbox">' );
 		var $notes = $( '<div class="jme-notes">' );
-		var lastWeight = 400;
 
 		WEIGHTS.forEach( function ( w ) {
 			$weight.append( $( '<option>' ).val( w[ 0 ] ).text( weightName( w[ 0 ] ) ) );
 		} );
 
 		$grid.append(
-			$( '<div class="jme-style">' ).append( $( '<label>' ).text( t( 'weight', 'Weight' ) ), $( '<div class="jme-field-control">' ).append( $weight ) ),
-			$( '<div class="jme-style jme-style-check">' ).append( $( '<label>' ).append( $italic, ' ' + t( 'italic', 'Italic' ) ) )
+			$( '<div class="jme-style">' ).append( $( '<label>' ).text( t( 'weight', 'Weight' ) ), $( '<div class="jme-field-control">' ).append( $weight ) )
 		);
 		$section.append( $notes );
 
@@ -854,16 +856,8 @@
 			if ( ! $weight.find( 'option[value="' + drawn.weight + '"]' ).length ) {
 				$weight.append( $( '<option>' ).val( drawn.weight ).text( weightName( drawn.weight ) ) );
 			}
-			if ( ! drawn.italic ) {
-				lastWeight = drawn.weight;
-			}
-			$weight.val( drawn.italic ? 400 : drawn.weight ).prop( 'disabled', drawn.italic );
-			$italic.prop( 'checked', drawn.italic );
+			$weight.val( drawn.weight );
 			$notes.empty();
-
-			if ( drawn.italic ) {
-				note( t( 'italicWeight', 'Unicorn Studio can\'t combine italic with a weight, so italic text is always drawn at Regular 400.' ) );
-			}
 
 			// Browsers look at the real weight inside the file (not fontWeight): they only add a
 			// synthetic bold, one fixed step, when 600+ is requested from a file lighter than 600.
@@ -875,17 +869,15 @@
 					},
 				];
 
-				if ( drawn.italic && ! info.italic ) {
-					note( t( 'fakeItalic', 'This font file has no italic style, so the browser slants it artificially.' ) );
-				} else if ( ! drawn.italic && drawn.weight < info.weight ) {
+				if ( drawn.weight < info.weight ) {
 					note(
 						t( 'thinner', 'This font file only contains %1$s, so a thinner weight won\'t show. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
 						useFileWeight[ 0 ],
 						useFileWeight[ 1 ]
 					);
-				} else if ( ! drawn.italic && drawn.weight > info.weight && drawn.weight >= 600 && info.weight < 600 ) {
+				} else if ( drawn.weight > info.weight && drawn.weight >= 600 && info.weight < 600 ) {
 					note( t( 'fakeBold', 'This font file is %1$s, so the browser thickens it artificially, and every weight from 600 up looks the same. Upload a font file in %2$s for a real %2$s.' ).replace( '%1$s', weightName( info.weight ) ).replace( /%2\$s/g, weightName( drawn.weight ) ) );
-				} else if ( ! drawn.italic && drawn.weight > info.weight ) {
+				} else if ( drawn.weight > info.weight ) {
 					note(
 						t( 'notThicker', 'This font file only contains %1$s, so it won\'t look thicker. Upload a font file in %2$s for this weight.' ).replace( '%1$s', weightName( info.weight ) ).replace( '%2$s', weightName( drawn.weight ) ),
 						useFileWeight[ 0 ],
@@ -899,9 +891,6 @@
 
 		$weight.on( 'change', function () {
 			setStyle( String( $weight.val() ) );
-		} );
-		$italic.on( 'change', function () {
-			setStyle( $italic.is( ':checked' ) ? 'italic' : String( lastWeight ) );
 		} );
 
 		group.refreshTypography = refresh;

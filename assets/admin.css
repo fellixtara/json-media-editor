@@ -56,8 +56,6 @@
 .jme-fields:not(.show-tech) .jme-path,
 .jme-fields:not(.show-tech) .jme-tech-only { display: none; }
 .jme-font-info { color: #1d2327; font-weight: 600; }
-.jme-style-check { justify-content: flex-end; }
-.jme-style-check label { display: flex; align-items: center; gap: 6px; min-height: 30px; font-size: 13px; }
 .jme-notes:empty { display: none; }
 .jme-notes { margin-top: 10px; display: grid; gap: 6px; }
 .jme-note { margin: 0; padding: 6px 10px; background: #fcf9e8; border-left: 4px solid #dba617; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
