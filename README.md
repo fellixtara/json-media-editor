@@ -35,6 +35,32 @@ It's built for animation tools that load their scene from an uploaded JSON file,
 
 Example: on a page whose hero section loads `.../uploads/2026/06/hoverreveal.json` through Unicorn Studio, swapping the image in the editor and saving changes the image-reveal animation straight away.
 
+## Screenshots
+
+**1. Media → JSON Editor lists only the JSON files in the Media Library**
+
+![JSON file list](screenshots/1-file-list.jpg)
+
+**2. Editor: the Images panel and the readable, indented JSON**
+
+![Editor](screenshots/2-editor.jpg)
+
+**3. Choose image opens the Media Library**
+
+![Choose image](screenshots/3-choose-image.jpg)
+
+**4. The new image goes straight into the JSON, waiting to be saved**
+
+![Image replaced](screenshots/4-image-replaced.jpg)
+
+**5. Saved: the animation now uses the updated file**
+
+![Saved](screenshots/5-saved.jpg)
+
+**6. Backups are kept automatically and can be restored with one click**
+
+![Backups](screenshots/6-backups.jpg)
+
 ## Developer hooks
 
 ```php
@@ -56,6 +82,7 @@ json-media-editor/
 ├── assets/
 │   ├── admin.js                 Editor, images panel, validation
 │   └── admin.css
+├── screenshots/                 README images (not included in the release ZIP)
 ├── readme.txt                   WordPress.org readme
 └── uninstall.php                Removes plugin data (option + backups)
 ```
@@ -66,7 +93,11 @@ Deleting the plugin removes its version option and the stored backups on every s
 
 ## Author
 
-[Djavaweb](https://djavaweb.com/). Contributor: [fellixtara](https://github.com/fellixtara)
+[Djavaweb](https://djavaweb.com/)
+
+## Contributors
+
+- [fellixtara](https://github.com/fellixtara)
 
 ## License
 
