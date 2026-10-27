@@ -49,3 +49,4 @@
 .jme-style .jme-field-control input:not([type="color"]), .jme-style select { width: 100%; max-width: none; }
 .jme-style .jme-colors { flex-wrap: nowrap; }
 .jme-style .jme-color-text { width: auto; flex: 1; min-width: 0; }
+.jme-bp-note { margin: 8px 0 0; }

@@ -43,6 +43,7 @@ Access requires the `upload_files` capability and permission to edit the attachm
 
 = 1.1.0 =
 * Detect fonts, other media files and texts (with typography and breakpoint values) in addition to images.
+* Text styles grouped by the screen sizes where each value is used (Unicorn Studio breakpoint rules); duplicate unused copies and font family names are shown once and kept in sync.
 * Allow font uploads to the Media Library.
 
 = 1.0.0 =

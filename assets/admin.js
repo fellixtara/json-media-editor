@@ -499,16 +499,18 @@
 			}
 			syncPicker( color );
 
+			var sub = Array.isArray( field.value ) ? [ i ] : [];
+
 			$picker.on( 'input', function () {
 				var value = $picker.val().toUpperCase();
 				$text.val( value );
-				apply( [ { path: path, value: value } ] );
+				apply( linkedChanges( field, value, sub ) );
 			} );
 			$text.on( 'change', function () {
 				var value = $.trim( $text.val() );
 				if ( HEX_COLOR.test( value ) ) {
 					syncPicker( value );
-					apply( [ { path: path, value: value } ] );
+					apply( linkedChanges( field, value, sub ) );
 				}
 			} );
 
@@ -540,7 +542,7 @@
 
 		$input.on( 'text-content' === field.kind || 'textarea' === field.kind ? 'input' : 'change', function () {
 			var value = castLike( field.value, $input.val() );
-			var synced = apply( [ { path: field.path, value: value } ], FAMILY_KEYS.test( field.key ) ? group.path : null );
+			var synced = apply( linkedChanges( field, value, [] ), FAMILY_KEYS.test( field.key ) ? group.path : null );
 
 			if ( synced ) {
 				updateInputs( synced );
@@ -594,21 +596,163 @@
 				}
 			} );
 
-			// Remaining styles, one compact grid per breakpoint ("" = base values).
-			var sections = [];
-			styles.forEach( function ( f ) {
-				if ( -1 === used.indexOf( f ) && -1 === sections.indexOf( f.breakpoint || '' ) ) {
-					sections.push( f.breakpoint || '' );
-				}
+			var rest = styles.filter( function ( f ) {
+				// A font family already shown next to its font file is kept in sync, so show it once.
+				return -1 === used.indexOf( f ) && ! ( FAMILY_KEYS.test( f.key ) && used.some( function ( u ) {
+					return FAMILY_KEYS.test( u.key ) && u.value === f.value;
+				} ) );
 			} );
-			sections.forEach( function ( name ) {
-				$group.append( renderStyleGrid( name || t( 'baseStyle', 'Style' ), styles.filter( function ( f ) {
-					return -1 === used.indexOf( f ) && ( f.breakpoint || '' ) === name;
-				} ), group ) );
+			var sections = screenSections( group, result.data, rest );
+
+			if ( sections.responsive ) {
+				$group.append( $( '<p class="description jme-bp-note">' ).text( t( 'bpNote', '' ) ) );
+			}
+			sections.list.forEach( function ( section ) {
+				$group.append( renderStyleGrid( section.title, section.fields, group ) );
 			} );
 
 			$fields.append( $group );
 		} );
+	}
+
+	/** Changes for a field plus its linked duplicates (unused copies that held the same value). */
+	function linkedChanges( field, value, sub ) {
+		return [ field.path ].concat( field.links || [] ).map( function ( path ) {
+			return { path: path.concat( sub ), value: value };
+		} );
+	}
+
+	/**
+	 * Arrange style fields the way Unicorn Studio applies them (setBreakpointValues):
+	 * breakpoints are checked from the smallest to the largest and a breakpoint applies
+	 * when screen width <= its max (min is not checked; Desktop has no max), the first
+	 * one defining a property wins, and the layer's own value is the fallback. With only
+	 * a Desktop breakpoint, the layer's own values are used.
+	 *
+	 * Each property is shown once per group of screens that use the same stored value;
+	 * unused copies with the same value are linked so they stay identical.
+	 *
+	 * @return {Object} { responsive: bool, list: [ { title, fields } ] }
+	 */
+	function screenSections( group, data, styles ) {
+		var owner = getAt( data, group.path ) || {};
+		var bps = Array.isArray( owner.breakpoints ) ? owner.breakpoints : [];
+		var desktop = bps.filter( function ( bp ) {
+			return 'Desktop' === bp.name;
+		} )[ 0 ];
+		var responsive = !! desktop && bps.length > 1;
+
+		if ( ! responsive ) {
+			// No breakpoints applied: the layer's own values are used, breakpoint copies are not.
+			var base = styles.filter( function ( f ) {
+				return ! f.breakpoint;
+			} );
+			base.forEach( function ( f ) {
+				f.links = styles.filter( function ( o ) {
+					return o.breakpoint && o.key === f.key && JSON.stringify( o.value ) === JSON.stringify( f.value );
+				} ).map( function ( o ) {
+					return o.path;
+				} );
+			} );
+			return { responsive: false, list: base.length ? [ { title: t( 'baseStyle', 'Style' ), fields: base } ] : [] };
+		}
+
+		var ordered = bps.map( function ( bp, i ) {
+			return { bp: bp, index: i };
+		} ).sort( function ( a, b ) {
+			return ( a.bp.min || 0 ) - ( b.bp.min || 0 );
+		} );
+		var smaller = ordered.filter( function ( o ) {
+			return null != o.bp.max;
+		} ).sort( function ( a, b ) {
+			return a.bp.max - b.bp.max;
+		} );
+
+		// Representative screens: one per breakpoint with a max, then Desktop.
+		var screens = smaller.map( function ( o, i ) {
+			// The smallest breakpoint also applies below its min, i.e. on mobile.
+			var name = 0 === i ? o.bp.name + ' ' + t( 'andSmaller', '& smaller' ) : o.bp.name;
+			var range = 0 === i ? '≤' + o.bp.max + 'px' : ( smaller[ i - 1 ].bp.max + 1 ) + '–' + o.bp.max + 'px';
+			return { width: o.bp.max, label: name + ' (' + range + ')' };
+		} );
+		screens.push( { width: Infinity, label: desktop.name + ' (≥' + ( smaller.length ? smaller[ smaller.length - 1 ].bp.max + 1 : desktop.min || 0 ) + 'px)' } );
+
+		function bpIndex( field ) {
+			var at = field.parentPath.lastIndexOf( 'breakpoints' );
+			return at > -1 ? field.parentPath[ at + 1 ] : null;
+		}
+
+		function source( key, width ) {
+			for ( var i = 0; i < ordered.length; i++ ) {
+				var bp = ordered[ i ].bp;
+				if ( ( null == bp.max || width <= bp.max ) && bp.props && key in bp.props ) {
+					return ordered[ i ].index;
+				}
+			}
+			return key in owner ? 'base' : null;
+		}
+
+		var keys = [];
+		styles.forEach( function ( f ) {
+			if ( -1 === keys.indexOf( f.key ) ) {
+				keys.push( f.key );
+			}
+		} );
+
+		var sections = {};
+		var order = [];
+
+		keys.forEach( function ( key ) {
+			var copies = styles.filter( function ( f ) {
+				return f.key === key && ( ! f.breakpoint || null !== bpIndex( f ) );
+			} );
+			var byCopy = {};
+
+			screens.forEach( function ( screen ) {
+				var src = source( key, screen.width );
+				var copy = copies.filter( function ( f ) {
+					return 'base' === src ? ! f.breakpoint : f.breakpoint && bpIndex( f ) === src;
+				} )[ 0 ];
+				if ( copy ) {
+					var id = JSON.stringify( copy.path );
+					byCopy[ id ] = byCopy[ id ] || { field: copy, screens: [] };
+					byCopy[ id ].screens.push( screen );
+				}
+			} );
+
+			var used = Object.keys( byCopy ).map( function ( id ) {
+				return byCopy[ id ].field;
+			} );
+
+			Object.keys( byCopy ).forEach( function ( id ) {
+				var entry = byCopy[ id ];
+				var all = entry.screens.length === screens.length;
+				var title = all ? t( 'allScreens', 'All screens' ) : entry.screens.map( function ( s ) {
+					return s.label;
+				} ).reverse().join( ' + ' );
+
+				entry.field.links = copies.filter( function ( c ) {
+					return -1 === used.indexOf( c ) && JSON.stringify( c.value ) === JSON.stringify( entry.field.value );
+				} ).map( function ( c ) {
+					return c.path;
+				} );
+
+				if ( ! sections[ title ] ) {
+					sections[ title ] = { title: title, fields: [], rank: all ? -1 : screens.length - screens.indexOf( entry.screens[ 0 ] ) };
+					order.push( title );
+				}
+				sections[ title ].fields.push( entry.field );
+			} );
+		} );
+
+		return {
+			responsive: true,
+			list: order.map( function ( title ) {
+				return sections[ title ];
+			} ).sort( function ( a, b ) {
+				return a.rank - b.rank;
+			} ),
+		};
 	}
 
 	function isMainField( field ) {
@@ -649,7 +793,7 @@
 		}
 
 		fields.forEach( function ( field ) {
-			var $cell = $( '<div class="jme-style">' ).attr( 'title', pathLabel( field.path ) );
+			var $cell = $( '<div class="jme-style">' ).attr( 'title', [ field.path ].concat( field.links || [] ).map( pathLabel ).join( '\n' ) );
 			$cell.append( $( '<label>' ).text( t( 'label_' + field.key, field.label ) ) );
 
 			if ( 'color' === field.kind ) {

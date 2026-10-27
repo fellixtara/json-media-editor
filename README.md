@@ -11,7 +11,12 @@ It's built for animation tools that load their scene from an uploaded JSON file,
   - **Images.** Shown with a preview. Replace one from the Media Library or paste a URL. For Unicorn Studio image layers, `naturalWidth` / `naturalHeight` are updated to match the new image. Lottie image assets (`u` + `p`) are supported too.
   - **Fonts** (`.ttf`, `.otf`, `.woff`, `.woff2`). Shown with a live preview in the font itself. Copies of the font family name in the same layer (e.g. Unicorn's `fontFamily` and `fontCSS.family`) stay in sync, so the layer keeps using the loaded font.
   - **Other media files.** Video, audio, JSON, 3D models.
-  - **Texts.** For example Unicorn Studio `textContent` or Lottie text, with their style: font family, size, weight, line height, letter spacing, alignment, color and text box size. Per-breakpoint values (Desktop, Tablet…) are shown separately, because they override the base values on those screens.
+  - **Texts.** For example Unicorn Studio `textContent` or Lottie text, with their style: font family, size, weight, line height, letter spacing, alignment, color and text box size. Styles are grouped by the screen sizes where each value is actually used, following Unicorn Studio's breakpoint rules:
+    - A breakpoint applies when the screen is at most its `max` width. Its `min` is not checked, so the smallest breakpoint (e.g. Tablet ≤991px) also covers mobile.
+    - Desktop applies to all wider screens.
+    - The layer's own value is used only for properties that no breakpoint sets.
+
+    Each property appears once per screen group. Copies in the file that are never used (e.g. a base `fontSize` identical to the Desktop one, or `fontFamily` + `fontCSS.family`) are updated along with it, so they never drift apart.
   - **Types are kept.** Numbers stay numbers and strings stay strings, so the animation reads values exactly as before.
 - **Font uploads.** `.ttf`, `.otf`, `.woff` and `.woff2` files can be uploaded to the Media Library, checked by their font signature. To turn this off, use `add_filter( 'jme_allow_font_uploads', '__return_false' );`.
 - **Readable editor.** Minified JSON is shown indented in the WordPress code editor (CodeMirror), with syntax highlighting, linting and folding. Only whitespace changes, so the data stays the same.
